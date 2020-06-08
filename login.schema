@@ -1,95 +1,121 @@
-attributetype ( 'address-oid'
-      NAME 'address'
-      DESC 'GPO Unique Resource Identifier'
-      EQUALITY caseIgnoreMatch
-      SUBSTR caseIgnoreSubstringsMatch
-      SYNTAX 1.3.6.1.4.1.1466.115.121.1.41 )	  
-attributetype ( 'b579f972.9e79.4da9.b62a.bccbbb1f1583'
+objectidentifier loginSchema 1.3.6.1.4.1.X.Y
+objectidentifier loginAttrs loginSchema:3
+objectidentifier loginOCs loginSchema:4
+
+attributetype ( loginAttrs:1 NAME 'addresses'
+	DESC 'user addresses'
+	EQUALITY caseIgnoreListMatch
+	SUBSTR caseIgnoreListSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.41 )	  
+attributetype ( loginAttrs:2
       NAME 'phone'
-	  DESC 'GPO phone Resource Identifier'
+	  DESC 'User phone no'
       EQUALITY telephoneNumberMatch
       SUBSTR telephoneNumberSubstringsMatch
       SYNTAX 1.3.6.1.4.1.1466.115.121.1.50
-	  SINGLE-VALUE)
+	  SINGLE-VALUE)	  
+  
+attributetype ( loginAttrs:3 
+	NAME 'custEmailAddress'
+	DESC 'User email address'
+	EQUALITY caseIgnoreIA5Match
+	SUBSTR caseIgnoreIA5SubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.26{256} 
+	SINGLE-VALUE)
+	 
+attributetype ( loginAttrs:4
+	NAME 'customerRole'
+	DESC 'User role'
+	EQUALITY caseIgnoreIA5Match
+	SUBSTR caseIgnoreIA5SubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.26{256} 
+	SINGLE-VALUE)
+	
+attributetype ( loginAttrs:5
+	NAME 'customerActions'
+	DESC 'User assigned actions'
+	EQUALITY caseIgnoreIA5Match
+	SUBSTR caseIgnoreIA5SubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.26{256} 
+	SINGLE-VALUE)
 	  
-emailAddress ATTRIBUTE ::= {
-           WITH SYNTAX IA5String (SIZE(1..pkcs-9-ub-emailAddress))
-           EQUALITY MATCHING RULE pkcs9CaseIgnoreMatch
-           ID pkcs-9-at-emailAdress
-   }
-	  
-customerRole ATTRIBUTE
-         WITH ATTRIBUTE-SYNTAX
-             iA5StringSyntax
-     ::= {pilotAttributeType 31}
-	  
-customerActions ATTRIBUTE
-         WITH ATTRIBUTE-SYNTAX
-             iA5StringSyntax
-     ::= {pilotAttributeType 31}
-	  
-attributetype ( 'customer_id-oid'
-      NAME 'customer_id'
+attributetype ( loginAttrs:6
+      NAME 'customerId'
+	  DESC 'User unique id'
       EQUALITY caseIgnoreMatch
       SUBSTR caseIgnoreSubstringsMatch
       SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
 	  SINGLE-VALUE)
 	  
-attributetype ( 'customer_name-oid'
-      NAME 'customer_name'
-      DESC 'name of person or job role available for contact'
+attributetype ( loginAttrs:7
+      NAME 'customerName'
+      DESC 'User name'
       EQUALITY caseIgnoreMatch
       SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
       SINGLE-VALUE)
 	  
-attributetype ( 'customer_pwd-oid'
-      NAME 'customer_pwd'
+attributetype ( loginAttrs:8
+      NAME 'customerPwd'
+	  DESC 'User password'
       EQUALITY octetStringMatch
       SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 
 	  SINGLE-VALUE)
 	  
-attributetype ( 'isLock-oid'
+attributetype ( loginAttrs:9
       NAME 'isLock'
-      DESC 'GPO Unique Resource Identifier'
+      DESC 'is user locked'
       EQUALITY caseIgnoreMatch
       SUBSTR caseIgnoreSubstringsMatch
       SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
 	  SINGLE-VALUE)
 	  
-attributetype ( 'isActive-oid'
+attributetype ( loginAttrs:10
       NAME 'isActive'
-      DESC 'GPO Unique Resource Identifier'
+      DESC 'is user active'
       EQUALITY caseIgnoreMatch
       SUBSTR caseIgnoreSubstringsMatch
       SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 	  
-creationTime ATTRIBUTE
-         WITH ATTRIBUTE-SYNTAX
-             uTCTimeSyntax
-     ::= {pilotAttributeType 23}
+attributetype ( loginAttrs:11 NAME 'createrName'
+	DESC 'creater name'
+	EQUALITY distinguishedNameMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 
+	SINGLE-VALUE)
+	
+attributetype ( loginAttrs:12 NAME 'modifyName'
+		DESC 'modifier name'
+        EQUALITY distinguishedNameMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.12
+		SINGLE-VALUE)		
 	  
-lastModifiedTime ATTRIBUTE
-         WITH ATTRIBUTE-SYNTAX
-             uTCTimeSyntax
-     ::= {pilotAttributeType 23}
+attributetype ( loginAttrs:15 NAME 'createTime'
+		DESC 'account creation time'
+        EQUALITY generalizedTimeMatch
+        ORDERING generalizedTimeOrderingMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.24
+        SINGLE-VALUE )
 	  
+attributetype ( loginAttrs:14 NAME 'modifyTime'
+		DESC 'account modified time'
+        EQUALITY generalizedTimeMatch
+        ORDERING generalizedTimeOrderingMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.24
+        SINGLE-VALUE ) 	  
 	  
-	  
-	  
-objectClass ( 'contactObject-oid'
+objectClass ( loginOCs:1
         NAME 'contactObject'
         DESC 'Describe a contactObject'
-        SUP ( top ) STRUCTURE
-        MUST ( emailAddress $ phone $ address ) )
+        SUP ( top ) STRUCTURAL
+        MUST ( custEmailAddress $ phone $ addresses ) )
 		
-objectClass ( 'userRoleActionObject-oid'
+objectClass ( loginOCs:2
         NAME 'userRoleActionObject'
         DESC 'Describe a userRoleActionObject'
         SUP ( top ) AUXILIARY
         MUST ( customerRole $ customerActions ) )
 		
-objectClass ( 'userObject-oid'
+objectClass ( loginOCs:3
         NAME 'userObject'
         DESC 'Describe a userObject'
-        SUP ( top ) STRUCTURE
-        MUST ( customer_id $ customer_name $ customer_pwd $ isLock $ isActive $ creationTime $ lastModifiedTime) )
+        SUP ( top ) STRUCTURAL
+        MUST ( customerId $ customerName $ customerPwd $ isLock $ isActive $ createrName $ createTime $ modifyName $ modifyTime) )
