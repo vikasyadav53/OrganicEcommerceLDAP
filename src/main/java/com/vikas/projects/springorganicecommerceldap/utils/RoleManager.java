@@ -44,5 +44,14 @@ public class RoleManager {
 	public boolean isRoleAvailable(String role) {
 		return roles_actions_map.containsKey(role);
 	}
+	
+	public boolean isActionPresentForRole(String role, String action) {
+		if(isRoleAvailable(role)) {
+			List<String> actions = roles_actions_map.get("role");
+			return actions.contains(action);
+		}
+		
+		return false;
+	}
 
 }
